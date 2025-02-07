@@ -9,7 +9,7 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\build\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\build\\${fileBasenameNoExtension}${env:EXEC_EXT}"
             ],
             "options": {
                 "cwd": "${fileDirname}"
