@@ -7,9 +7,9 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "${workspaceFolder}${pathSeparator}src${pathSeparator}*",
                 "-o",
-                "${fileDirname}\\build\\${fileBasenameNoExtension}${env:EXEC_EXT}"
+                "${workspaceFolder}${pathSeparator}build${pathSeparator}${fileBasenameNoExtension}${env:EXEC_EXT}"
             ],
             "options": {
                 "cwd": "${fileDirname}"
