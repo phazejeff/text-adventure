@@ -8,19 +8,16 @@ using namespace std::chrono_literals;
 
 int main() {
     cout << endl << endl << endl << endl << endl << endl << endl << endl;
-    Player player = Player(1);
-    Player enemy = Player(1);
+    Player player = Player(1, false);
+    Player enemy = Player(1, true);
     int round = 1;
-    int strength = 0;
-    int enemyStrength = 0;
     int gold = 0;
 
     // Next round and randomly gain gold
     while (player.getHealth() > 0) {
         if (enemy.getHealth() <= 0) {
             round++;
-            enemy = Player(round);
-            enemyStrength += 5;
+            enemy = Player(round, true);
             cout << endl << "You win the round and received..." << endl;
             sleep_for(1s);
             int rngGold = (rand() % 200) + 1;
@@ -45,7 +42,6 @@ int main() {
                     case 1:
                         if (gold >= 50) {
                             player.heal(100);
-                            cout << endl << "You gained +100 HP!" << endl;
                             gold -= 50;
                             buyDecision = 3;
                             break;
@@ -57,8 +53,7 @@ int main() {
                         }
                     case 2:
                         if (gold >= 25) {
-                            strength += 10;
-                            cout << endl << "Your strength improved by +10!" << endl;
+                            player.addStrength(10);
                             gold -= 25;
                             buyDecision = 3;
                             break;
@@ -85,9 +80,8 @@ int main() {
             if (rngSteal <= 50) {
                 sleep_for(1s);
                 cout << endl << "Aww shucks, not again..." << endl;
-                strength += 20;
+                player.addStrength(20);
                 player.heal(50);
-                cout << endl << "You gain +20 strength and gain +50 HP!" << endl;
                 sleep_for(1s);
             } else {
                 sleep_for(1s);
@@ -95,6 +89,7 @@ int main() {
                 player.takeDamage(50);
                 cout << endl << "The kind shopkeeper hobo kicks you and you lose 50 HP!" << endl;
             }
+            shopDecision = 3;
             break;
         }
         case 3:
@@ -119,22 +114,13 @@ int main() {
         cin >> decision;
         switch (decision) {
             case 1:
-                if (!enemy.isBlocking) {
-                    enemy.takeDamage(20 + strength);
-                    cout << endl << "Attacking...you deal damage!" << endl;
-                } else {
-                    enemy.takeDamage((10 + strength) / 2);
-                    cout << endl << "Attacking...the enemy blocked and you deal less damage!" << endl;
-                    enemy.isBlocking = false;
-                }
+                enemy.takeDamage(player);
                 break;
             case 2:
-                cout << endl << "Blocking..." << endl;
-                player.isBlocking = true;
+                player.startBlocking();
                 break;
             case 3:
                 player.heal(10);
-                cout << endl << "Healing..." << endl;
                 break;
             default:
                 cout << endl << "Not a valid option. Skipping turn! Get cooked moron." << endl;
@@ -154,7 +140,7 @@ int main() {
 
         // Enemy turn
         if (enemy.getHealth() > 0) {
-            enemy.isBlocking = false;
+            enemy.stopBlocking();
             int rngNum = (rand() % 3) + 1;
 
             // Debuug random number generated
@@ -163,22 +149,13 @@ int main() {
 
             switch (rngNum) {
                 case 1:
-                    if (!player.isBlocking) {
-                        player.takeDamage(20 + enemyStrength);
-                        cout << endl << "Enemy Attacking...You take damage!" << endl;
-                    } else {
-                        player.takeDamage((10 + enemyStrength) / 2);
-                        cout << endl << "Enemy Attacking...You blocked and took damage!" << endl;
-                        player.isBlocking = false;
-                    }
+                    player.takeDamage(enemy);
                     break;
                 case 2:
-                    cout << endl << "Enemy Blocking..." << endl;
-                    enemy.isBlocking = true;
+                    enemy.startBlocking();
                     break;
                 case 3:
                     enemy.heal(10);
-                    cout << endl << "Enemy Healing...Enemy healed for 10 HP!" << endl;
                     break;
                 default:
                     cout << endl << "Not a valid option. Skipping turn! Get cooked moron." << endl;

@@ -4,19 +4,25 @@
 class Player {
     private:
         int baseHealth = 100;
-        int healthLevel;
+        int level;
         int currentHealth;
-
+        int strength;
+        bool isBlocking = false;
+        bool isEnemy;
 
     public:
-        Player(int healthLevel);
+        Player(int level, bool isEnemy);
         int getBaseHealth();
         int getHealth();
+        int getStrength();
+        bool getIsEnemy();
+        bool getIsBlocking();
+        void addStrength(int amount);
+        void startBlocking();
+        void stopBlocking();
+        void takeDamage(Player attacker);
         void takeDamage(int dmg);
         void heal(int amount);
-        bool isBlocking;
-        void block();
-        int strength;
 };
 
 #endif
