@@ -7,12 +7,16 @@ class Player {
         int healthLevel;
         int currentHealth;
 
+
     public:
         Player(int healthLevel);
         int getBaseHealth();
         int getHealth();
         void takeDamage(int dmg);
         void heal(int amount);
+        bool isBlocking;
+        void block();
+        int strength;
 };
 
 #endif

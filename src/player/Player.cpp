@@ -22,7 +22,13 @@ void Player::takeDamage(int dmg) {
 
 void Player::heal(int amount) {
     this->currentHealth += amount;
+    /*
     if (this->currentHealth > this->getBaseHealth()) {
         this->currentHealth = this->getBaseHealth();
     }
+    */
+}
+
+void Player::block() {
+    isBlocking = true;
 }
