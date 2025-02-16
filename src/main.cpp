@@ -1,23 +1,146 @@
 #include <iostream>
 #include <thread>
 #include <limits>
-#include "player/Player.h"
+#include "Player.h"
+#include "resources.h"
+
 using namespace std;
 using namespace std::this_thread;
 using namespace std::chrono_literals;
 
-int main() {
-    cout << endl << endl << endl << endl << endl << endl << endl << endl;
-    Player player = Player(1);
-    Player enemy = Player(1);
-    int round = 1;
 
+int main() {
+
+    cout << endl << endl << endl << endl << endl << endl << endl << endl;
+    Player player = Player(1, false);
+    Player enemy = Player(1, true);
+    int round = 1;
+    int gold = 0;
+    int intput = 0; //get it
+
+    cout << NARRATION_1<< endl;
+    cout << NARRATION_2 << endl;
+    cout << NARRATION_3 << endl;
+    cout << NARRATION_4 << endl;
+    cout << DIALOG_1 << endl;
+    cout << DIALOG_2 << endl;
+    cout << "(1. yes / 2. no)" << endl;
+    cin >> intput ;
+
+    switch(intput){
+        case 1:
+            cout << DIALOG_3 << endl;
+            cout << DIALOG_4 << endl;
+            cout << NARRATION_5 << endl << endl;
+            break;
+        case 2:
+            cout << DIALOG_5 << endl;
+            cout << DIALOG_6 << endl;
+            cout << NARRATION_5 << endl << endl;
+            break;
+        default:
+            cout << "Invalid input" << endl;
+    }
+
+    cout << NARRATION_6 << endl;
+    cout << NARRATION_7 << endl;
+    cout << NARRATION_8 << endl;
+    cout << DIALOG_7 << endl;
+    cout << NARRATION_9 << endl;
+
+
+
+    // Next round and randomly gain gold
     while (player.getHealth() > 0) {
         if (enemy.getHealth() <= 0) {
             round++;
-            enemy = Player(round);
-            cout << endl << "You win the round!" << endl;
+            enemy = Player(round, true);
+            cout << endl << "You win the round and received..." << endl;
             sleep_for(1s);
+            int rngGold = (rand() % 200) + 1;
+            cout << rngGold << " GOLD!" << endl;
+            gold += rngGold;
+            sleep_for(1s);
+
+    // SHOPPING
+    cout << "You encounter a strange hobo who offers you an assortment of strange items." << endl;
+    int shopDecision = 0; // Initialize shopDecision
+    while (shopDecision != 3) {
+    cout << endl << endl << endl;
+    cout << "What's shakin' bacon?" << " You have " << gold << " GOLD! (1: BUY, 2: STEAL, 3: LEAVE): ";
+    cin >> shopDecision;
+    switch (shopDecision) {
+        case 1: {
+            cout << "Whatcha need, pumpkin seed? (1: HP UP(-50 GOLD), 2: STR UP(-25 GOLD), 3: EXIT): ";
+            int buyDecision = 0; // Initialize buyDecision
+            while (buyDecision != 3) {
+                cin >> buyDecision;
+                switch (buyDecision) {
+                    case 1:
+                        if (gold >= 50) {
+                            player.heal(100);
+                            gold -= 50;
+                            buyDecision = 3;
+                            break;
+                        }
+                        else {
+                            cout << endl << "Sorry you don't have enough GOLD..." << endl;
+                            buyDecision = 3;
+                            break;
+                        }
+                    case 2:
+                        if (gold >= 25) {
+                            player.addStrength(10);
+                            gold -= 25;
+                            buyDecision = 3;
+                            break;
+                        }
+                        else {
+                            cout << endl << "Sorry you don't have enough GOLD..." << endl;
+                            buyDecision = 3;
+                            break;
+                        }
+                    case 3:
+
+                        break;
+                    default:
+                        cout << endl << "Not a valid option" << endl;
+                        buyDecision = 3;
+                        break;
+                }
+                //sleep_for(1s);
+
+            }
+            break;
+        }
+        case 2: {
+            int rngSteal = (rand() % 100) + 1;
+            if (rngSteal <= 50) {
+                sleep_for(1s);
+                cout << endl << "Aww shucks, not again..." << endl;
+                player.addStrength(20);
+                player.heal(50);
+                sleep_for(1s);
+            } else {
+                sleep_for(1s);
+                cout << endl << "Hey stop that, buddy! Get Outta here!" << endl;
+                player.takeDamage(50);
+                cout << endl << "The kind shopkeeper hobo kicks you and you lose 50 HP!" << endl;
+            }
+            shopDecision = 3;
+            break;
+        }
+        case 3:
+            cout << endl << "Later Alligator!" << endl << endl;
+            cout << NARRATION_10 << endl;
+            break;
+        default:
+            cout << endl << "Not a valid option" << endl;
+            break;
+    }
+    //sleep_for(1s);
+}
+
             cout << "Round " << round << ":" << endl;
             sleep_for(1s);
         }
@@ -30,24 +153,58 @@ int main() {
         cin >> decision;
         switch (decision) {
             case 1:
-                enemy.takeDamage(20);
-                cout << endl << "Attacking..." << endl;
+                enemy.takeDamage(player);
                 break;
             case 2:
-                cout << endl << "Blocking..." << endl;
+                player.startBlocking();
                 break;
             case 3:
                 player.heal(10);
-                cout << endl << "Healing..." << endl;
                 break;
             default:
                 cout << endl << "Not a valid option. Skipping turn! Get cooked moron." << endl;
                 break;
         }
+        sleep_for(1s);
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(),'\n'); // so it doesnt break when you input a non number
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // so it doesn't break when you input a non-number
 
         cout << endl << endl;
+
+        cout << "Enemy health: " << enemy.getHealth() << endl;
+        cout << "Your health: " << player.getHealth() << endl;
+        sleep_for(1s);
+
+        cout << endl << endl;
+
+        // Enemy turn
+        if (enemy.getHealth() > 0) {
+            enemy.stopBlocking();
+            int rngNum = (rand() % 3) + 1;
+
+            // Debuug random number generated
+            //cout << rngNum << endl << endl;
+            cout << "ENEMY TURN!" << endl << endl;
+
+            switch (rngNum) {
+                case 1:
+                    player.takeDamage(enemy);
+                    break;
+                case 2:
+                    enemy.startBlocking();
+                    break;
+                case 3:
+                    enemy.heal(10);
+                    break;
+                default:
+                    cout << endl << "Not a valid option. Skipping turn! Get cooked moron." << endl;
+                    break;
+            }
+
+            sleep_for(1s);
+
+            cout << endl << endl;
+        }
     }
     return 0;
-} 
+}
